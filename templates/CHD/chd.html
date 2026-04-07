@@ -225,16 +225,17 @@
                   <input id="Glucose" name="Glucose" type="number" min="0" max="300" required />
                 </div>
               </div>
-
-              <div class="inline-actions">
-                <button type="submit" class="btn-large waves-effect waves-light">Generate result</button>
-                <button type="button" class="secondary-btn btn-large" onclick="openSampleModal()">Load sample data</button>
-              </div>
             </div>
 
             <div class="wizard-nav">
-              <button type="button" id="cPrevBtn" class="secondary-btn btn-large" onclick="prevCStep()" style="display: none">Back</button>
-              <button type="button" id="cNextBtn" class="btn-large waves-effect waves-light" onclick="nextCStep()">Continue</button>
+              <div class="wizard-nav-left">
+                <button type="button" id="cPrevBtn" class="secondary-btn btn-large" onclick="prevCStep()" style="display: none">Back</button>
+              </div>
+              <div class="wizard-nav-right">
+                <button type="button" class="secondary-btn btn-large" onclick="openSampleModal()">Load sample data</button>
+                <button type="button" id="cNextBtn" class="btn-large waves-effect waves-light" onclick="nextCStep()">Continue</button>
+                <button type="submit" id="cSubmitBtn" class="btn-large waves-effect waves-light" style="display: none">Generate result</button>
+              </div>
             </div>
           </div>
         </form>
@@ -384,6 +385,7 @@
       document.getElementById("cProgressFill").style.width = (step / totalCSteps) * 100 + "%";
       document.getElementById("cPrevBtn").style.display = step === 1 ? "none" : "inline-flex";
       document.getElementById("cNextBtn").style.display = step === totalCSteps ? "none" : "inline-flex";
+      document.getElementById("cSubmitBtn").style.display = step === totalCSteps ? "inline-flex" : "none";
     }
 
     function updateRange(inputId, outputId) {

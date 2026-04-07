@@ -90,17 +90,18 @@
                   </label>
                   <input id="MCV" name="MCV" type="number" step="0.1" required />
                 </div>
-              </div>
-
-              <div class="inline-actions">
-                <button type="submit" class="btn-large waves-effect waves-light">Generate result</button>
-                <button type="button" class="secondary-btn btn-large" onclick="openSampleModal()">Load sample data</button>
-              </div>
+            </div>
             </div>
 
             <div class="wizard-nav">
-              <button type="button" id="aPrevBtn" class="secondary-btn btn-large" onclick="prevAStep()" style="display: none">Back</button>
-              <button type="button" id="aNextBtn" class="btn-large waves-effect waves-light" onclick="nextAStep()">Continue</button>
+              <div class="wizard-nav-left">
+                <button type="button" id="aPrevBtn" class="secondary-btn btn-large" onclick="prevAStep()" style="display: none">Back</button>
+              </div>
+              <div class="wizard-nav-right">
+                <button type="button" class="secondary-btn btn-large" onclick="openSampleModal()">Load sample data</button>
+                <button type="button" id="aNextBtn" class="btn-large waves-effect waves-light" onclick="nextAStep()">Continue</button>
+                <button type="submit" id="aSubmitBtn" class="btn-large waves-effect waves-light" style="display: none">Generate result</button>
+              </div>
             </div>
           </div>
         </form>
@@ -262,6 +263,7 @@
       document.getElementById("aProgressFill").style.width = (step / totalASteps) * 100 + "%";
       document.getElementById("aPrevBtn").style.display = step === 1 ? "none" : "inline-flex";
       document.getElementById("aNextBtn").style.display = step === totalASteps ? "none" : "inline-flex";
+      document.getElementById("aSubmitBtn").style.display = step === totalASteps ? "inline-flex" : "none";
     }
 
     function validateAStep(step) {
