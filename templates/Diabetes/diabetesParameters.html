@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Disease Prediction | Diabetes Parameters{% endblock %}
+
+{% block content %}
+  <div class="container page-shell">
+    <section class="page-hero animate-in">
+      <span class="eyebrow">Diabetes module</span>
+      <h1>Diabetes parameter guide</h1>
+      <p>Use this page to understand what each diabetes input represents before submitting a screening.</p>
+    </section>
+
+    <nav class="page-tabs animate-in animate-in-2" aria-label="Diabetes pages">
+      <div class="tab-links">
+        <a href="/diabetes" class="page-tab">Screening</a>
+        <a href="/diabetesParameters" class="page-tab active">Parameters</a>
+        <a href="/diabetesHelp" class="page-tab">Guide</a>
+      </div>
+    </nav>
+
+    <section class="section-grid animate-in animate-in-3">
+      <div class="content-card">
+        <h3>Input definitions</h3>
+        <ul class="content-list">
+          <li><strong>Pregnancies:</strong> Number of pregnancies recorded in the source dataset.</li>
+          <li><strong>Glucose:</strong> Plasma glucose concentration, one of the strongest diabetes-related risk signals.</li>
+          <li><strong>Blood Pressure:</strong> Diastolic blood pressure value in mmHg.</li>
+          <li><strong>Skin Thickness:</strong> Triceps skin-fold thickness, often used as a body composition indicator.</li>
+          <li><strong>Insulin:</strong> Two-hour serum insulin concentration.</li>
+          <li><strong>BMI:</strong> Body Mass Index, commonly associated with metabolic risk.</li>
+          <li><strong>Diabetes Pedigree Function:</strong> Family predisposition score used in the original dataset.</li>
+          <li><strong>Age:</strong> Age in years.</li>
+        </ul>
+      </div>
+
+      <div class="summary-card">
+        <h3>Good input practice</h3>
+        <dl>
+          <div>
+            <dt>Preferred source</dt>
+            <dd>Recent records</dd>
+          </div>
+          <div>
+            <dt>Units</dt>
+            <dd>Clinical units</dd>
+          </div>
+          <div>
+            <dt>Input style</dt>
+            <dd>Exact values</dd>
+          </div>
+          <div>
+            <dt>Goal</dt>
+            <dd>Better consistency</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="metric-table-wrap page-shell animate-in animate-in-4">
+      <table class="metric-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Accepted range</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Pregnancies</td><td>0 to 15</td></tr>
+          <tr><td>Glucose</td><td>60 to 200</td></tr>
+          <tr><td>Blood Pressure</td><td>0 to 150</td></tr>
+          <tr><td>Skin Thickness</td><td>0 to 100</td></tr>
+          <tr><td>Insulin</td><td>0 to 900</td></tr>
+          <tr><td>BMI</td><td>0 to 70</td></tr>
+          <tr><td>Diabetes Pedigree Function</td><td>0 to 3</td></tr>
+          <tr><td>Age</td><td>18 to 90</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notice-box animate-in animate-in-5">
+      <h4>Data quality note</h4>
+      <p>Estimated values and placeholder numbers can shift the result materially. Use measured values whenever they are available.</p>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Disease Prediction | CHD Parameters{% endblock %}
+
+{% block content %}
+  <div class="container page-shell">
+    <section class="page-hero animate-in">
+      <span class="eyebrow">CHD module</span>
+      <h1>CHD parameter guide</h1>
+      <p>Use this page to review the cardiovascular risk factors included in the ten-year coronary heart disease screening model.</p>
+    </section>
+
+    <nav class="page-tabs animate-in animate-in-2" aria-label="CHD pages">
+      <div class="tab-links">
+        <a href="/chd" class="page-tab">Screening</a>
+        <a href="/chdParameters" class="page-tab active">Parameters</a>
+        <a href="/chdHelp" class="page-tab">Guide</a>
+      </div>
+    </nav>
+
+    <section class="section-grid animate-in animate-in-3">
+      <div class="content-card">
+        <h3>Parameter categories</h3>
+        <ul class="content-list">
+          <li><strong>Demographics:</strong> Sex at birth, age, and education level.</li>
+          <li><strong>Lifestyle:</strong> Current smoking status and cigarettes per day.</li>
+          <li><strong>Medical history:</strong> Blood pressure medication, prior stroke, hypertension, and diabetes.</li>
+          <li><strong>Vitals and labs:</strong> Cholesterol, systolic and diastolic blood pressure, BMI, heart rate, and glucose.</li>
+        </ul>
+      </div>
+
+      <div class="summary-card">
+        <h3>Good input practice</h3>
+        <dl>
+          <div>
+            <dt>Preferred source</dt>
+            <dd>Recent vitals</dd>
+          </div>
+          <div>
+            <dt>Labs</dt>
+            <dd>Measured values</dd>
+          </div>
+          <div>
+            <dt>History</dt>
+            <dd>Documented only</dd>
+          </div>
+          <div>
+            <dt>Goal</dt>
+            <dd>Better consistency</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="metric-table-wrap page-shell animate-in animate-in-4">
+      <table class="metric-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Accepted range</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Male</td><td>0 to 1</td></tr>
+          <tr><td>Age</td><td>20 to 90</td></tr>
+          <tr><td>Education</td><td>1 to 4</td></tr>
+          <tr><td>Current Smoker</td><td>0 to 1</td></tr>
+          <tr><td>Cigarettes Per Day</td><td>0 to 50</td></tr>
+          <tr><td>BP Medicines</td><td>0 to 1</td></tr>
+          <tr><td>Prevalent Stroke</td><td>0 to 1</td></tr>
+          <tr><td>Prevalent Hypertensive</td><td>0 to 1</td></tr>
+          <tr><td>Diabetes</td><td>0 to 1</td></tr>
+          <tr><td>Total Cholesterol</td><td>0 to 500</td></tr>
+          <tr><td>Systolic Blood Pressure</td><td>80 to 300</td></tr>
+          <tr><td>Diastolic Blood Pressure</td><td>45 to 200</td></tr>
+          <tr><td>BMI</td><td>0 to 70</td></tr>
+          <tr><td>Heart Rate</td><td>0 to 130</td></tr>
+          <tr><td>Glucose</td><td>0 to 300</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notice-box animate-in animate-in-5">
+      <h4>Data quality note</h4>
+      <p>Recent, realistic cardiovascular measurements make the screening far more interpretable than guessed or placeholder values.</p>
+    </div>
+  </div>
+{% endblock %}

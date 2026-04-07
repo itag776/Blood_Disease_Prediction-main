@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+    <title>{% block title %}Blood Disease Prediction{% endblock %}</title>
+    <meta name="theme-color" content="#0a0e1a" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/materialize.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="{{ url_for('static', filename='css/style.css') }}" type="text/css" rel="stylesheet" media="screen,projection" />
+    {% block head_extra %}{% endblock %}
+  </head>
+
+  <body class="{% block body_class %}{% endblock %}">
+    {% set path = request.path %}
+    <header class="site-header">
+      <nav class="site-nav" role="navigation">
+        <div class="nav-wrapper container">
+          <a id="logo-container" href="/" class="brand-logo">
+            <span class="brand-mark">BD</span>
+            <span class="brand-copy">
+              <span>Blood Disease Prediction</span>
+              <small>Clinical Screening Platform</small>
+            </span>
+          </a>
+
+          <ul class="right hide-on-med-and-down nav-links">
+            <li><a href="/" class="{% if path == '/' %}active{% endif %}">Overview</a></li>
+            <li><a href="/diabetes" class="{% if path.startswith('/diabetes') %}active{% endif %}">Diabetes</a></li>
+            <li><a href="/anemia" class="{% if path.startswith('/anemia') %}active{% endif %}">Anemia</a></li>
+            <li><a href="/chd" class="{% if path.startswith('/chd') %}active{% endif %}">CHD</a></li>
+            <li><a href="/diabetes" class="nav-cta">Start Screening</a></li>
+          </ul>
+
+          <ul id="nav-mobile" class="sidenav">
+            <li><a href="/" class="{% if path == '/' %}active{% endif %}">Overview</a></li>
+            <li><a href="/diabetes" class="{% if path.startswith('/diabetes') %}active{% endif %}">Diabetes</a></li>
+            <li><a href="/anemia" class="{% if path.startswith('/anemia') %}active{% endif %}">Anemia</a></li>
+            <li><a href="/chd" class="{% if path.startswith('/chd') %}active{% endif %}">CHD</a></li>
+            <li><a href="/diabetes">Start Screening</a></li>
+          </ul>
+
+          <a href="#" data-target="nav-mobile" class="sidenav-trigger hide-on-large-only">
+            <i class="material-icons">menu</i>
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main-content">
+      {% block content %}{% endblock %}
+    </main>
+
+    <div class="container">
+      <footer class="footer-panel">
+        <div class="footer-grid">
+          <div>
+            <h3>Professional screening support</h3>
+            <p>
+              This platform helps present machine-learning risk estimates for diabetes, anemia, and coronary heart disease
+              in a clearer workflow. It is intended for education and early awareness, not diagnosis.
+            </p>
+          </div>
+          <div class="footer-meta">
+            <span>Educational use</span>
+            <span>Instant review</span>
+            <span>Clear UX</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const sidenavs = document.querySelectorAll(".sidenav");
+        const modals = document.querySelectorAll(".modal");
+        if (window.M) {
+          M.Sidenav.init(sidenavs);
+          M.Modal.init(modals, {
+            dismissible: true,
+            opacity: 0.45,
+            inDuration: 220,
+            outDuration: 180,
+          });
+        }
+      });
+    </script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

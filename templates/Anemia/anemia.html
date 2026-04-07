@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Disease Prediction | Anemia Screening{% endblock %}
+
+{% block content %}
+  <div class="container page-shell">
+    <section class="page-hero animate-in">
+      <span class="eyebrow animate-in animate-in-1">Anemia module</span>
+      <h1 class="animate-in animate-in-2">Anemia screening</h1>
+      <p class="animate-in animate-in-3">
+        Review hemoglobin and red-cell index measurements in a short two-step workflow designed to make hematology inputs
+        feel easier to enter and easier to understand.
+      </p>
+    </section>
+
+    <nav class="page-tabs animate-in animate-in-3" aria-label="Anemia pages">
+      <div class="tab-links">
+        <a href="/anemia" class="page-tab active">Screening</a>
+        <a href="/anemiaParameters" class="page-tab">Parameters</a>
+        <a href="/anemiaHelp" class="page-tab">Guide</a>
+      </div>
+    </nav>
+
+    <section class="page-layout animate-in animate-in-4">
+      <div>
+        <form action="/predictAnemia" method="POST" id="anemiaForm">
+          <div class="form-shell">
+            <div class="form-shell-header">
+              <div>
+                <div class="step-caption">Step <span id="aStepCount">1</span> of 2</div>
+                <h2>Blood profile inputs</h2>
+                <p>Use values from a recent complete blood count when possible to keep the screening result grounded in real measurements.</p>
+                <div class="progress-track"><div class="progress-fill" id="aProgressFill" style="width: 50%"></div></div>
+              </div>
+            </div>
+
+            <div class="wizard-step active" data-astep="1">
+              <div class="row">
+                <div class="input-field selection-field col s12">
+                  <div class="field-label">
+                    Sex at birth
+                    <span class="info-icon">i<span class="tooltip-text">The model uses 0 for female and 1 for male.</span></span>
+                  </div>
+                  <input id="Gender" name="Gender" type="hidden" value="0" />
+                  <div class="choice-grid two-col">
+                    <button type="button" id="GenderChoiceFemale" class="choice-card active" onclick="selectChoice('Gender', '0', this)">
+                      <strong>Female</strong>
+                      <span>Stored as 0 for the model input.</span>
+                    </button>
+                    <button type="button" class="choice-card" onclick="selectChoice('Gender', '1', this)">
+                      <strong>Male</strong>
+                      <span>Stored as 1 for the model input.</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="input-field col s12">
+                  <label class="field-label" for="Hemoglobin">
+                    Hemoglobin
+                    <span class="info-icon">i<span class="tooltip-text">Hemoglobin level in g/dL.</span></span>
+                  </label>
+                  <div class="range-row">
+                    <input id="Hemoglobin" name="Hemoglobin" type="range" min="5" max="20" step="0.1" value="13" oninput="updateRange('Hemoglobin', 'HemoVal')" />
+                    <span class="range-value" id="HemoVal">13</span>
+                  </div>
+                  <span class="field-note">A lower hemoglobin value can indicate anemia-related risk depending on the wider profile.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-astep="2">
+              <div class="row">
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="MCH">
+                    MCH
+                    <span class="info-icon">i<span class="tooltip-text">Mean Corpuscular Hemoglobin.</span></span>
+                  </label>
+                  <input id="MCH" name="MCH" type="number" step="0.1" required />
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="MCHC">
+                    MCHC
+                    <span class="info-icon">i<span class="tooltip-text">Mean Corpuscular Hemoglobin Concentration.</span></span>
+                  </label>
+                  <input id="MCHC" name="MCHC" type="number" step="0.1" required />
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="MCV">
+                    MCV
+                    <span class="info-icon">i<span class="tooltip-text">Mean Corpuscular Volume.</span></span>
+                  </label>
+                  <input id="MCV" name="MCV" type="number" step="0.1" required />
+                </div>
+              </div>
+
+              <div class="inline-actions">
+                <button type="submit" class="btn-large waves-effect waves-light">Generate result</button>
+                <button type="button" class="secondary-btn btn-large" onclick="openSampleModal()">Load sample data</button>
+              </div>
+            </div>
+
+            <div class="wizard-nav">
+              <button type="button" id="aPrevBtn" class="secondary-btn btn-large" onclick="prevAStep()" style="display: none">Back</button>
+              <button type="button" id="aNextBtn" class="btn-large waves-effect waves-light" onclick="nextAStep()">Continue</button>
+            </div>
+          </div>
+        </form>
+
+        {% if pred %}
+          {% if score is defined %}
+            {% set meter = score|int %}
+            {% set degree = meter * 3.6 %}
+            <div class="result-panel">
+              <div class="risk-ring-wrap">
+                <div class="risk-ring" style="background: conic-gradient(var(--brand) {{ degree }}deg, #dce4eb 0deg);"></div>
+                <div class="risk-score">{{ meter }}%</div>
+              </div>
+              <div class="result-copy">
+                <h4>{{ pred }}</h4>
+                <span class="risk-tag {% if risk_level == 'Low Risk' %}risk-low{% elif risk_level == 'Moderate Risk' %}risk-mid{% else %}risk-high{% endif %}">
+                  {{ risk_level|default('Moderate Risk') }}
+                </span>
+                <p>The screening result reflects how closely the submitted blood profile aligns with anemia-related patterns in the model.</p>
+                <ul class="action-list">
+                  <li>Review the complete blood count and any relevant iron, folate, or B12 workup.</li>
+                  <li>Use real laboratory values instead of estimates for the most reliable output.</li>
+                  <li>Confirm interpretation with a clinician before making treatment decisions.</li>
+                </ul>
+                <div class="result-actions">
+                  <button type="button" class="secondary-btn btn-large" onclick="window.print()">Print result</button>
+                  <a href="/anemia" class="btn-large waves-effect waves-light">Start over</a>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="notice-box">
+              <h4>Input issue</h4>
+              <p>{{ pred }}</p>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const pred = "{% if pred %}true{% endif %}";
+          if (pred) {
+            const form = document.getElementById("anemiaForm");
+            if (form) form.style.display = "none";
+            const panel = document.querySelector(".result-panel");
+            if (panel) {
+              window.scrollTo(0, panel.offsetTop - 100);
+            }
+          }
+        });
+      </script>
+
+      <aside class="aside-stack">
+        <div class="summary-card animate-in animate-in-2">
+          <h3>Screening summary</h3>
+          <dl>
+            <div>
+              <dt>Fields</dt>
+              <dd>5 inputs</dd>
+            </div>
+            <div>
+              <dt>Format</dt>
+              <dd>2 steps</dd>
+            </div>
+            <div>
+              <dt>Best source</dt>
+              <dd>CBC results</dd>
+            </div>
+            <div>
+              <dt>Use</dt>
+              <dd>Educational</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="aside-card animate-in animate-in-3">
+          <h3>Before you begin</h3>
+          <ul class="bullet-list">
+            <li>Check that units match the standard CBC ranges shown in the parameter guide.</li>
+            <li>Hemoglobin alone is not enough to interpret anemia subtype or cause.</li>
+            <li>The result is most useful when all red-cell indices are entered carefully.</li>
+          </ul>
+        </div>
+        <div class="aside-card animate-in animate-in-4">
+          <h3>Supporting pages</h3>
+          <p>Review the parameter page for quick definitions or open the guide for interpretation notes.</p>
+          <div class="cta-row">
+            <a href="/anemiaParameters" class="secondary-btn btn-large">View parameters</a>
+            <a href="/anemiaHelp" class="secondary-btn btn-large">Open guide</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <div id="sampleModal" class="modal">
+      <div class="modal-content">
+        <h4>Select a sample profile</h4>
+        <p>These examples help preview the form and the overall screening workflow.</p>
+        <div class="sample-option" onclick="fillSampleData('healthy')">
+          <strong>Healthy profile</strong>
+          <p>Normal hemoglobin with stable red-cell indices.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('mild')">
+          <strong>Mild anemia pattern</strong>
+          <p>Slightly reduced hemoglobin with modest index changes.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('moderate')">
+          <strong>Moderate anemia pattern</strong>
+          <p>Lower hemoglobin with clearer red-cell index abnormalities.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('severe')">
+          <strong>Severe anemia pattern</strong>
+          <p>Very low hemoglobin with strongly abnormal supporting values.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-overlay" id="aLoadingOverlay">
+      <div class="loading-card">
+        <div class="spinner"></div>
+        <div>
+          <strong>Processing blood profile</strong>
+          <div class="field-note">The model is calculating the submitted anemia screening result.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("anemiaForm").addEventListener("submit", function () {
+        document.getElementById("aLoadingOverlay").style.display = "flex";
+      });
+      showAStep(aStep);
+    });
+
+    let aStep = 1;
+    const totalASteps = 2;
+
+    function updateRange(inputId, outputId) {
+      document.getElementById(outputId).textContent = document.getElementById(inputId).value;
+    }
+
+    function selectChoice(targetId, value, button) {
+      document.getElementById(targetId).value = value;
+      button.closest(".choice-grid").querySelectorAll(".choice-card").forEach((card) => {
+        card.classList.remove("active");
+      });
+      button.classList.add("active");
+    }
+
+    function showAStep(step) {
+      document.querySelectorAll(".wizard-step[data-astep]").forEach((el, idx) => {
+        el.classList.toggle("active", idx + 1 === step);
+      });
+      document.getElementById("aStepCount").textContent = step;
+      document.getElementById("aProgressFill").style.width = (step / totalASteps) * 100 + "%";
+      document.getElementById("aPrevBtn").style.display = step === 1 ? "none" : "inline-flex";
+      document.getElementById("aNextBtn").style.display = step === totalASteps ? "none" : "inline-flex";
+    }
+
+    function validateAStep(step) {
+      const section = document.querySelector(`.wizard-step[data-astep="${step}"]`);
+      const requiredInputs = section.querySelectorAll("input[required]");
+      for (const input of requiredInputs) {
+        if (!input.value) {
+          input.focus();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function nextAStep() {
+      if (!validateAStep(aStep)) return;
+      if (aStep < totalASteps) {
+        aStep += 1;
+        showAStep(aStep);
+      }
+    }
+
+    function prevAStep() {
+      if (aStep > 1) {
+        aStep -= 1;
+        showAStep(aStep);
+      }
+    }
+
+    function openSampleModal() {
+      const elem = document.getElementById("sampleModal");
+      const instance = M.Modal.getInstance(elem);
+      instance.open();
+    }
+
+    function fillSampleData(profile) {
+      const data = {
+        healthy: {
+          Gender: "1",
+          Hemoglobin: "14.5",
+          MCH: "30",
+          MCHC: "34",
+          MCV: "88",
+        },
+        mild: {
+          Gender: "0",
+          Hemoglobin: "11.5",
+          MCH: "27",
+          MCHC: "31",
+          MCV: "82",
+        },
+        moderate: {
+          Gender: "1",
+          Hemoglobin: "9",
+          MCH: "24",
+          MCHC: "28",
+          MCV: "75",
+        },
+        severe: {
+          Gender: "0",
+          Hemoglobin: "6",
+          MCH: "20",
+          MCHC: "25",
+          MCV: "65",
+        },
+      };
+
+      if (data[profile]) {
+        Object.keys(data[profile]).forEach((key) => {
+          document.getElementById(key).value = data[profile][key];
+        });
+        updateRange("Hemoglobin", "HemoVal");
+        const choiceCards = document.querySelectorAll(".choice-grid .choice-card");
+        choiceCards.forEach((card) => card.classList.remove("active"));
+        choiceCards[data[profile].Gender === "1" ? 1 : 0].classList.add("active");
+        const instance = M.Modal.getInstance(document.getElementById("sampleModal"));
+        instance.close();
+      }
+    }
+  </script>
+{% endblock %}

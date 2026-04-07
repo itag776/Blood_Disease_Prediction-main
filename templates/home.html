@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Disease Prediction | Overview{% endblock %}
+
+{% block content %}
+  <div class="container page-shell">
+    <section class="hero-panel animate-in">
+      <div class="hero-split">
+        <div>
+          <span class="eyebrow animate-in animate-in-1">Clinical risk screening</span>
+          <h1 class="animate-in animate-in-2">Presentable, professional early-risk assessment for common conditions.</h1>
+          <p class="hero-subtitle animate-in animate-in-3">
+            Review diabetes, anemia, and coronary heart disease risk with a cleaner workflow, better guidance, and clearer
+            outputs for educational screening scenarios.
+          </p>
+          <div class="hero-actions animate-in animate-in-4">
+            <a href="/diabetes" class="btn-large waves-effect waves-light">Start a screening</a>
+            <a href="#modules" class="secondary-btn btn-large">View modules</a>
+          </div>
+          <div class="hero-meta animate-in animate-in-5">
+            <span class="metric-pill">Three guided modules</span>
+            <span class="metric-pill">Step-by-step forms</span>
+            <span class="metric-pill">Readable result summaries</span>
+          </div>
+        </div>
+
+        <div class="hero-visual animate-in animate-in-3">
+          <div class="mock-panel">
+            <div class="mock-header">
+              <div>
+                <div class="mock-title">Screening dashboard</div>
+                <div class="mock-subtitle">Professional summary format</div>
+              </div>
+              <span class="mock-status">Ready</span>
+            </div>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-label">Modules</div>
+                <div class="metric-value-lg">3</div>
+                <p>Diabetes, anemia, and ten-year CHD risk workflows.</p>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Completion time</div>
+                <div class="metric-value-lg">1-2 min</div>
+                <p>Each form is split into manageable steps for faster review.</p>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Output style</div>
+                <div class="metric-value-lg">Clear</div>
+                <p>Risk score, label, and follow-up suggestions in one panel.</p>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Use case</div>
+                <div class="metric-value-lg">Learning</div>
+                <p>Supports discussion and awareness before clinical follow-up.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="modules" class="page-shell">
+      <div class="section-grid">
+        <a href="/diabetes" class="module-card animate-in animate-in-1">
+          <span class="module-icon">DB</span>
+          <h3>Diabetes risk screening</h3>
+          <p>Review glucose-related risk indicators with a guided three-step workflow.</p>
+        </a>
+        <a href="/anemia" class="module-card animate-in animate-in-2">
+          <span class="module-icon">AN</span>
+          <h3>Anemia screening</h3>
+          <p>Assess hemoglobin and red-cell index patterns linked to anemia risk.</p>
+        </a>
+        <a href="/chd" class="module-card animate-in animate-in-3">
+          <span class="module-icon">CH</span>
+          <h3>Coronary heart disease risk</h3>
+          <p>Estimate ten-year cardiovascular risk using history, vitals, and lab inputs.</p>
+        </a>
+        <div class="content-card animate-in animate-in-4">
+          <h3>Why the experience is stronger now</h3>
+          <p>
+            The interface is organized around guided progress, clearer labels, consistent navigation, and cleaner result
+            presentation instead of crowded controls and decorative noise.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-grid page-shell">
+      <div class="stat-card animate-in animate-in-1">
+        <h3>Guided input flow</h3>
+        <p>Long forms are split into smaller steps so users can move through them with less friction.</p>
+      </div>
+      <div class="stat-card animate-in animate-in-2">
+        <h3>Interpretable results</h3>
+        <p>Each prediction is paired with a risk indicator and plain-language action prompts.</p>
+      </div>
+      <div class="stat-card animate-in animate-in-3">
+        <h3>Reference pages</h3>
+        <p>Every module includes parameter guidance and a help page for quick context before submission.</p>
+      </div>
+    </section>
+
+    <section class="section-grid page-shell">
+      <div class="content-card animate-in animate-in-1">
+        <h3>How the workflow works</h3>
+        <ol class="step-list">
+          <li>Select the screening module that matches the condition you want to review.</li>
+          <li>Enter realistic values from recent vitals or lab work where possible.</li>
+          <li>Submit the form to receive a model-estimated risk result and supporting guidance.</li>
+        </ol>
+      </div>
+      <div class="content-card animate-in animate-in-2">
+        <h3>What makes the output useful</h3>
+        <ul class="bullet-list">
+          <li>Structured inputs improve consistency and reduce entry confusion.</li>
+          <li>Professional visual hierarchy makes the result easier to understand quickly.</li>
+          <li>Educational disclaimers keep the product grounded and credible.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="notice-box animate-in">
+      <h4>Medical notice</h4>
+      <p>
+        This website supports early screening awareness only. It should not be used as a standalone medical decision tool,
+        and it does not replace clinician review, laboratory confirmation, or emergency care.
+      </p>
+    </div>
+  </div>
+{% endblock %}

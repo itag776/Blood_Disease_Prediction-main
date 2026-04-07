@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Disease Prediction | Diabetes Screening{% endblock %}
+
+{% block content %}
+  <div class="container page-shell">
+    <section class="page-hero animate-in">
+      <span class="eyebrow animate-in animate-in-1">Diabetes module</span>
+      <h1 class="animate-in animate-in-2">Diabetes risk screening</h1>
+      <p class="animate-in animate-in-3">
+        Complete a short guided form using metabolic indicators and family-history context to review model-estimated
+        diabetes risk for the submitted profile.
+      </p>
+    </section>
+
+    <nav class="page-tabs animate-in animate-in-3" aria-label="Diabetes pages">
+      <div class="tab-links">
+        <a href="/diabetes" class="page-tab active">Screening</a>
+        <a href="/diabetesParameters" class="page-tab">Parameters</a>
+        <a href="/diabetesHelp" class="page-tab">Guide</a>
+      </div>
+    </nav>
+
+    <section class="page-layout animate-in animate-in-4">
+      <div>
+        <form action="/predict" method="POST" id="diabetesForm">
+          <div class="form-shell">
+            <div class="form-shell-header">
+              <div>
+                <div class="step-caption">Step <span id="stepCount">1</span> of 3</div>
+                <h2>Patient inputs</h2>
+                <p>Use recent values when possible. The form is broken into smaller sections so the screening feels easier to complete accurately.</p>
+                <div class="progress-track"><div class="progress-fill" id="progressFill" style="width: 33.3333%"></div></div>
+              </div>
+            </div>
+
+            <div class="wizard-step active" data-step="1">
+              <div class="row">
+                <div class="input-field col s12 m6">
+                  <label class="field-label" for="Age">
+                    Age
+                    <span class="info-icon">i<span class="tooltip-text">Age in years.</span></span>
+                  </label>
+                  <div class="range-row">
+                    <input id="Age" name="Age" type="range" min="18" max="90" value="35" oninput="updateRange('Age', 'AgeVal')" />
+                    <span class="range-value" id="AgeVal">35</span>
+                  </div>
+                  <span class="field-note">Adult age range accepted by the trained model.</span>
+                </div>
+                <div class="input-field col s12 m6">
+                  <label class="field-label" for="Pregnancies">
+                    Pregnancies
+                    <span class="info-icon">i<span class="tooltip-text">Total number of pregnancies used by the underlying dataset.</span></span>
+                  </label>
+                  <input id="Pregnancies" name="Pregnancies" type="number" min="0" max="15" required />
+                  <span class="field-note">Enter a whole number between 0 and 15.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-step="2">
+              <div class="row">
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="Glucose">
+                    Glucose
+                    <span class="info-icon">i<span class="tooltip-text">Plasma glucose level in mg/dL.</span></span>
+                  </label>
+                  <input id="Glucose" name="Glucose" type="number" min="60" max="200" required />
+                  <span class="field-note">Use a realistic lab or screening value.</span>
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="BloodPressure">
+                    Diastolic blood pressure
+                    <span class="info-icon">i<span class="tooltip-text">Diastolic blood pressure in mmHg.</span></span>
+                  </label>
+                  <div class="range-row">
+                    <input id="BloodPressure" name="Blood Pressure" type="range" min="0" max="150" value="72" oninput="updateRange('BloodPressure', 'BPVal')" />
+                    <span class="range-value" id="BPVal">72</span>
+                  </div>
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="BMI">
+                    BMI
+                    <span class="info-icon">i<span class="tooltip-text">Body Mass Index in kg/m^2.</span></span>
+                  </label>
+                  <div class="range-row">
+                    <input id="BMI" name="BMI" type="range" min="0" max="70" value="26" step="0.1" oninput="updateRange('BMI', 'BMIVal')" />
+                    <span class="range-value" id="BMIVal">26</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-step="3">
+              <div class="row">
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="SkinThickness">
+                    Skin thickness
+                    <span class="info-icon">i<span class="tooltip-text">Triceps skin-fold thickness in millimeters.</span></span>
+                  </label>
+                  <input id="SkinThickness" name="Skin Thickness" type="number" min="0" max="100" required />
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="Insulin">
+                    Insulin
+                    <span class="info-icon">i<span class="tooltip-text">Two-hour serum insulin value.</span></span>
+                  </label>
+                  <input id="Insulin" name="Insulin" type="number" min="0" max="900" required />
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="DiabetesPedigreeFunction">
+                    Diabetes pedigree function
+                    <span class="info-icon">i<span class="tooltip-text">Family predisposition score used by the model.</span></span>
+                  </label>
+                  <input id="DiabetesPedigreeFunction" name="Diabetes Pedigree Function" type="number" step="0.001" min="0" max="3" required />
+                </div>
+              </div>
+
+              <div class="inline-actions">
+                <button type="submit" class="btn-large waves-effect waves-light">Generate result</button>
+                <button type="button" class="secondary-btn btn-large" onclick="openSampleModal()">Load sample data</button>
+              </div>
+            </div>
+
+            <div class="wizard-nav">
+              <button type="button" id="prevBtn" class="secondary-btn btn-large" onclick="prevStep()" style="display: none">Back</button>
+              <button type="button" id="nextBtn" class="btn-large waves-effect waves-light" onclick="nextStep()">Continue</button>
+            </div>
+          </div>
+        </form>
+
+        {% if pred %}
+          {% if score is defined %}
+            {% set meter = score|int %}
+            {% set degree = meter * 3.6 %}
+            <div class="result-panel">
+              <div class="risk-ring-wrap">
+                <div class="risk-ring" style="background: conic-gradient(var(--brand) {{ degree }}deg, #dce4eb 0deg);"></div>
+                <div class="risk-score">{{ meter }}%</div>
+              </div>
+              <div class="result-copy">
+                <h4>{{ pred }}</h4>
+                <span class="risk-tag {% if risk_level == 'Low Risk' %}risk-low{% elif risk_level == 'Moderate Risk' %}risk-mid{% else %}risk-high{% endif %}">
+                  {{ risk_level|default('Moderate Risk') }}
+                </span>
+                <p>The submitted profile suggests this level of diabetes-related risk based on the trained screening model.</p>
+                <ul class="action-list">
+                  <li>Review glucose trends and lifestyle factors such as activity, sleep, and nutrition.</li>
+                  <li>Confirm concerns with formal testing and a qualified clinician.</li>
+                  <li>Retake the form after correcting any estimated or placeholder inputs.</li>
+                </ul>
+                <div class="result-actions">
+                  <button type="button" class="secondary-btn btn-large" onclick="window.print()">Print result</button>
+                  <a href="/diabetes" class="btn-large waves-effect waves-light">Start over</a>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="notice-box">
+              <h4>Input issue</h4>
+              <p>{{ pred }}</p>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const pred = "{% if pred %}true{% endif %}";
+          if (pred) {
+            const form = document.getElementById("diabetesForm");
+            if (form) form.style.display = "none";
+            const panel = document.querySelector(".result-panel");
+            if (panel) {
+              window.scrollTo(0, panel.offsetTop - 100);
+            }
+          }
+        });
+      </script>
+
+      <aside class="aside-stack">
+        <div class="summary-card animate-in animate-in-2">
+          <h3>Screening summary</h3>
+          <dl>
+            <div>
+              <dt>Fields</dt>
+              <dd>8 inputs</dd>
+            </div>
+            <div>
+              <dt>Format</dt>
+              <dd>3 steps</dd>
+            </div>
+            <div>
+              <dt>Output</dt>
+              <dd>Risk score</dd>
+            </div>
+            <div>
+              <dt>Use</dt>
+              <dd>Educational</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="aside-card animate-in animate-in-3">
+          <h3>Before you begin</h3>
+          <ul class="bullet-list">
+            <li>Use measured values whenever possible instead of rough estimates.</li>
+            <li>Keep units consistent with the field descriptions shown in each step.</li>
+            <li>Open the parameter guide if you need a quick explanation of any metric.</li>
+          </ul>
+        </div>
+        <div class="aside-card animate-in animate-in-4">
+          <h3>Need reference help?</h3>
+          <p>Use the supporting pages if you want a cleaner explanation of the model inputs or how to read the result.</p>
+          <div class="cta-row">
+            <a href="/diabetesParameters" class="secondary-btn btn-large">View parameters</a>
+            <a href="/diabetesHelp" class="secondary-btn btn-large">Open guide</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <div id="sampleModal" class="modal">
+      <div class="modal-content">
+        <h4>Select a sample profile</h4>
+        <p>Use one of these examples to preview how the form behaves.</p>
+        <div class="sample-option" onclick="fillSampleData('healthy')">
+          <strong>Healthy profile</strong>
+          <p>Normal glucose, healthy BMI, and lower family-history score.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('prediabetic')">
+          <strong>Elevated risk profile</strong>
+          <p>Borderline glucose elevation with moderate metabolic risk factors.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('diabetic')">
+          <strong>Diabetic pattern</strong>
+          <p>Higher glucose, higher BMI, and stronger family-history signal.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('severe')">
+          <strong>Severe pattern</strong>
+          <p>Very high glucose and multiple strong risk indicators.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-card">
+        <div class="spinner"></div>
+        <div>
+          <strong>Analyzing health profile</strong>
+          <div class="field-note">The model is processing the submitted screening data.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("diabetesForm").addEventListener("submit", function () {
+        document.getElementById("loadingOverlay").style.display = "flex";
+      });
+      showStep(currentStep);
+    });
+
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    function updateRange(inputId, outputId) {
+      document.getElementById(outputId).textContent = document.getElementById(inputId).value;
+    }
+
+    function showStep(step) {
+      document.querySelectorAll(".wizard-step").forEach((el, idx) => {
+        el.classList.toggle("active", idx + 1 === step);
+      });
+      document.getElementById("stepCount").textContent = step;
+      document.getElementById("progressFill").style.width = (step / totalSteps) * 100 + "%";
+      document.getElementById("prevBtn").style.display = step === 1 ? "none" : "inline-flex";
+      document.getElementById("nextBtn").style.display = step === totalSteps ? "none" : "inline-flex";
+    }
+
+    function validateStep(step) {
+      const section = document.querySelector(`.wizard-step[data-step="${step}"]`);
+      const requiredInputs = section.querySelectorAll("input[required]");
+      for (const input of requiredInputs) {
+        if (!input.value) {
+          input.focus();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function nextStep() {
+      if (!validateStep(currentStep)) return;
+      if (currentStep < totalSteps) {
+        currentStep += 1;
+        showStep(currentStep);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep -= 1;
+        showStep(currentStep);
+      }
+    }
+
+    function openSampleModal() {
+      const elem = document.getElementById("sampleModal");
+      const instance = M.Modal.getInstance(elem);
+      instance.open();
+    }
+
+    function fillSampleData(profile) {
+      const data = {
+        healthy: {
+          Pregnancies: "2",
+          Glucose: "95",
+          BloodPressure: "70",
+          SkinThickness: "20",
+          Insulin: "50",
+          BMI: "22",
+          DiabetesPedigreeFunction: "0.2",
+          Age: "35",
+        },
+        prediabetic: {
+          Pregnancies: "3",
+          Glucose: "125",
+          BloodPressure: "78",
+          SkinThickness: "26",
+          Insulin: "120",
+          BMI: "27",
+          DiabetesPedigreeFunction: "0.5",
+          Age: "45",
+        },
+        diabetic: {
+          Pregnancies: "5",
+          Glucose: "148",
+          BloodPressure: "80",
+          SkinThickness: "35",
+          Insulin: "185",
+          BMI: "33.6",
+          DiabetesPedigreeFunction: "0.627",
+          Age: "50",
+        },
+        severe: {
+          Pregnancies: "8",
+          Glucose: "200",
+          BloodPressure: "95",
+          SkinThickness: "40",
+          Insulin: "300",
+          BMI: "38",
+          DiabetesPedigreeFunction: "1.5",
+          Age: "60",
+        },
+      };
+
+      if (data[profile]) {
+        Object.keys(data[profile]).forEach((key) => {
+          document.getElementById(key).value = data[profile][key];
+        });
+        updateRange("Age", "AgeVal");
+        updateRange("BloodPressure", "BPVal");
+        updateRange("BMI", "BMIVal");
+        const instance = M.Modal.getInstance(document.getElementById("sampleModal"));
+        instance.close();
+      }
+    }
+  </script>
+{% endblock %}

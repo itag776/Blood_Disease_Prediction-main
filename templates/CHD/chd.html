@@ -1,0 +1,522 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Disease Prediction | CHD Screening{% endblock %}
+
+{% block content %}
+  <div class="container page-shell">
+    <section class="page-hero animate-in">
+      <span class="eyebrow animate-in animate-in-1">CHD module</span>
+      <h1 class="animate-in animate-in-2">Coronary heart disease risk screening</h1>
+      <p class="animate-in animate-in-3">
+        Estimate ten-year coronary heart disease risk with a structured cardiovascular intake covering demographics,
+        lifestyle, history, blood pressure, and laboratory markers.
+      </p>
+    </section>
+
+    <nav class="page-tabs animate-in animate-in-3" aria-label="CHD pages">
+      <div class="tab-links">
+        <a href="/chd" class="page-tab active">Screening</a>
+        <a href="/chdParameters" class="page-tab">Parameters</a>
+        <a href="/chdHelp" class="page-tab">Guide</a>
+      </div>
+    </nav>
+
+    <section class="page-layout animate-in animate-in-4">
+      <div>
+        <form action="/predictCHD" method="POST" id="chdForm">
+          <div class="form-shell">
+            <div class="form-shell-header">
+              <div>
+                <div class="step-caption">Step <span id="cStepCount">1</span> of 4</div>
+                <h2>Cardiovascular screening inputs</h2>
+                <p>The workflow groups related risk factors together so the longer form stays readable and more manageable.</p>
+                <div class="progress-track"><div class="progress-fill" id="cProgressFill" style="width: 25%"></div></div>
+              </div>
+            </div>
+
+            <div class="wizard-step active" data-cstep="1">
+              <div class="row">
+                <div class="input-field toggle-field col s12 m4">
+                  <div class="field-label">
+                    Sex at birth
+                    <span class="info-icon">i<span class="tooltip-text">No = female, yes = male for the model.</span></span>
+                  </div>
+                  <input type="hidden" id="Male" name="Male" value="0" />
+                  <div class="toggle-row">
+                    <div class="toggle-copy">
+                      <strong>Male</strong>
+                      <span>Toggle on if the patient is male.</span>
+                    </div>
+                    <div class="switch">
+                      <label>Female<input type="checkbox" id="MaleToggle" onchange="syncToggle('MaleToggle', 'Male')" /><span class="lever"></span>Male</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="Age">
+                    Age
+                    <span class="info-icon">i<span class="tooltip-text">Age in years.</span></span>
+                  </label>
+                  <div class="range-row">
+                    <input id="Age" name="Age" type="range" min="20" max="90" value="45" oninput="updateRange('Age', 'CAgeVal')" />
+                    <span class="range-value" id="CAgeVal">45</span>
+                  </div>
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="Education">
+                    Education level
+                    <span class="info-icon">i<span class="tooltip-text">Model input range is 1 through 4.</span></span>
+                  </label>
+                  <input id="Education" name="Education" type="number" min="1" max="4" required />
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-cstep="2">
+              <div class="row">
+                <div class="input-field toggle-field col s12 m4">
+                  <div class="field-label">
+                    Current smoker
+                    <span class="info-icon">i<span class="tooltip-text">No = 0, yes = 1.</span></span>
+                  </div>
+                  <input type="hidden" id="CurrentSmoker" name="Current Smoker" value="0" />
+                  <div class="toggle-row">
+                    <div class="toggle-copy">
+                      <strong>Smoking status</strong>
+                      <span>Turn on if the patient currently smokes.</span>
+                    </div>
+                    <div class="switch">
+                      <label>No<input type="checkbox" id="CurrentSmokerToggle" onchange="syncToggle('CurrentSmokerToggle', 'CurrentSmoker')" /><span class="lever"></span>Yes</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="CigarettesPerDay">
+                    Cigarettes per day
+                    <span class="info-icon">i<span class="tooltip-text">Daily cigarette count.</span></span>
+                  </label>
+                  <input id="CigarettesPerDay" name="Cigarettes Per Day" type="number" min="0" max="50" required />
+                </div>
+                <div class="input-field toggle-field col s12 m4">
+                  <div class="field-label">
+                    Blood pressure medication
+                    <span class="info-icon">i<span class="tooltip-text">No = 0, yes = 1.</span></span>
+                  </div>
+                  <input type="hidden" id="BPMedicines" name="BP Medicines" value="0" />
+                  <div class="toggle-row">
+                    <div class="toggle-copy">
+                      <strong>Medication status</strong>
+                      <span>Turn on if the patient uses blood pressure medication.</span>
+                    </div>
+                    <div class="switch">
+                      <label>No<input type="checkbox" id="BPMedicinesToggle" onchange="syncToggle('BPMedicinesToggle', 'BPMedicines')" /><span class="lever"></span>Yes</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-cstep="3">
+              <div class="row">
+                <div class="input-field toggle-field col s12 m4">
+                  <div class="field-label">
+                    History of stroke
+                    <span class="info-icon">i<span class="tooltip-text">No = 0, yes = 1.</span></span>
+                  </div>
+                  <input type="hidden" id="PrevalentStroke" name="Prevalent Stroke" value="0" />
+                  <div class="toggle-row">
+                    <div class="toggle-copy">
+                      <strong>Previous stroke</strong>
+                      <span>Turn on if there is a documented stroke history.</span>
+                    </div>
+                    <div class="switch">
+                      <label>No<input type="checkbox" id="PrevalentStrokeToggle" onchange="syncToggle('PrevalentStrokeToggle', 'PrevalentStroke')" /><span class="lever"></span>Yes</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-field toggle-field col s12 m4">
+                  <div class="field-label">
+                    Hypertensive history
+                    <span class="info-icon">i<span class="tooltip-text">No = 0, yes = 1.</span></span>
+                  </div>
+                  <input type="hidden" id="PrevalentHypertensive" name="Prevalent Hypertensive" value="0" />
+                  <div class="toggle-row">
+                    <div class="toggle-copy">
+                      <strong>Prevalent hypertension</strong>
+                      <span>Turn on if the patient has a history of hypertension.</span>
+                    </div>
+                    <div class="switch">
+                      <label>No<input type="checkbox" id="PrevalentHypertensiveToggle" onchange="syncToggle('PrevalentHypertensiveToggle', 'PrevalentHypertensive')" /><span class="lever"></span>Yes</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-field toggle-field col s12 m4">
+                  <div class="field-label">
+                    Diabetes
+                    <span class="info-icon">i<span class="tooltip-text">No = 0, yes = 1.</span></span>
+                  </div>
+                  <input type="hidden" id="Diabetes" name="Diabetes" value="0" />
+                  <div class="toggle-row">
+                    <div class="toggle-copy">
+                      <strong>Diabetes diagnosis</strong>
+                      <span>Turn on if the patient has diagnosed diabetes.</span>
+                    </div>
+                    <div class="switch">
+                      <label>No<input type="checkbox" id="DiabetesToggle" onchange="syncToggle('DiabetesToggle', 'Diabetes')" /><span class="lever"></span>Yes</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="wizard-step" data-cstep="4">
+              <div class="row">
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="TotalCholesterol">
+                    Total cholesterol
+                    <span class="info-icon">i<span class="tooltip-text">Cholesterol in mg/dL.</span></span>
+                  </label>
+                  <input id="TotalCholesterol" name="Total Cholesterol" type="number" min="0" max="500" required />
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="SystolicBloodPressure">
+                    Systolic blood pressure
+                    <span class="info-icon">i<span class="tooltip-text">Systolic pressure in mmHg.</span></span>
+                  </label>
+                  <div class="range-row">
+                    <input id="SystolicBloodPressure" name="Systolic Blood Pressure" type="range" min="80" max="300" value="120" oninput="updateRange('SystolicBloodPressure', 'CSysVal')" />
+                    <span class="range-value" id="CSysVal">120</span>
+                  </div>
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="DiastolicBloodPressure">
+                    Diastolic blood pressure
+                    <span class="info-icon">i<span class="tooltip-text">Diastolic pressure in mmHg.</span></span>
+                  </label>
+                  <div class="range-row">
+                    <input id="DiastolicBloodPressure" name="Diastolic Blood Pressure" type="range" min="45" max="200" value="80" oninput="updateRange('DiastolicBloodPressure', 'CDiaVal')" />
+                    <span class="range-value" id="CDiaVal">80</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="BMI">
+                    BMI
+                    <span class="info-icon">i<span class="tooltip-text">Body Mass Index.</span></span>
+                  </label>
+                  <div class="range-row">
+                    <input id="BMI" name="BMI" type="range" min="0" max="70" value="26" step="0.1" oninput="updateRange('BMI', 'CBMIVal')" />
+                    <span class="range-value" id="CBMIVal">26</span>
+                  </div>
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="HeartRate">
+                    Heart rate
+                    <span class="info-icon">i<span class="tooltip-text">Heart rate in beats per minute.</span></span>
+                  </label>
+                  <input id="HeartRate" name="Heart Rate" type="number" min="0" max="130" required />
+                </div>
+                <div class="input-field col s12 m4">
+                  <label class="field-label" for="Glucose">
+                    Glucose
+                    <span class="info-icon">i<span class="tooltip-text">Blood glucose in mg/dL.</span></span>
+                  </label>
+                  <input id="Glucose" name="Glucose" type="number" min="0" max="300" required />
+                </div>
+              </div>
+
+              <div class="inline-actions">
+                <button type="submit" class="btn-large waves-effect waves-light">Generate result</button>
+                <button type="button" class="secondary-btn btn-large" onclick="openSampleModal()">Load sample data</button>
+              </div>
+            </div>
+
+            <div class="wizard-nav">
+              <button type="button" id="cPrevBtn" class="secondary-btn btn-large" onclick="prevCStep()" style="display: none">Back</button>
+              <button type="button" id="cNextBtn" class="btn-large waves-effect waves-light" onclick="nextCStep()">Continue</button>
+            </div>
+          </div>
+        </form>
+
+        {% if pred %}
+          {% if score is defined %}
+            {% set meter = score|int %}
+            {% set degree = meter * 3.6 %}
+            <div class="result-panel">
+              <div class="risk-ring-wrap">
+                <div class="risk-ring" style="background: conic-gradient(var(--brand) {{ degree }}deg, #dce4eb 0deg);"></div>
+                <div class="risk-score">{{ meter }}%</div>
+              </div>
+              <div class="result-copy">
+                <h4>{{ pred }}</h4>
+                <span class="risk-tag {% if risk_level == 'Low Risk' %}risk-low{% elif risk_level == 'Moderate Risk' %}risk-mid{% else %}risk-high{% endif %}">
+                  {{ risk_level|default('Moderate Risk') }}
+                </span>
+                <p>The result reflects estimated ten-year coronary heart disease risk based on the entered cardiovascular profile.</p>
+                <ul class="action-list">
+                  <li>Recheck blood pressure, cholesterol, glucose, and smoking inputs for accuracy.</li>
+                  <li>Use the output as a preventive discussion point rather than a diagnosis.</li>
+                  <li>Discuss elevated risk with a clinician for formal cardiovascular assessment.</li>
+                </ul>
+                <div class="result-actions">
+                  <button type="button" class="secondary-btn btn-large" onclick="window.print()">Print result</button>
+                  <a href="/chd" class="btn-large waves-effect waves-light">Start over</a>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="notice-box">
+              <h4>Input issue</h4>
+              <p>{{ pred }}</p>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const pred = "{% if pred %}true{% endif %}";
+          if (pred) {
+            const form = document.getElementById("chdForm");
+            if (form) form.style.display = "none";
+            const panel = document.querySelector(".result-panel");
+            if (panel) {
+              window.scrollTo(0, panel.offsetTop - 100);
+            }
+          }
+        });
+      </script>
+
+      <aside class="aside-stack">
+        <div class="summary-card animate-in animate-in-2">
+          <h3>Screening summary</h3>
+          <dl>
+            <div>
+              <dt>Fields</dt>
+              <dd>15 inputs</dd>
+            </div>
+            <div>
+              <dt>Format</dt>
+              <dd>4 steps</dd>
+            </div>
+            <div>
+              <dt>Horizon</dt>
+              <dd>10 years</dd>
+            </div>
+            <div>
+              <dt>Use</dt>
+              <dd>Educational</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="aside-card animate-in animate-in-3">
+          <h3>Before you begin</h3>
+          <ul class="bullet-list">
+            <li>Collect recent lipid, blood pressure, and glucose values before starting.</li>
+            <li>Smoking and medication history are important drivers of this model.</li>
+            <li>Use the parameter page if you need the accepted range for any field.</li>
+          </ul>
+        </div>
+        <div class="aside-card animate-in animate-in-4">
+          <h3>Supporting pages</h3>
+          <p>Use the reference screens for input definitions and interpretation guidance.</p>
+          <div class="cta-row">
+            <a href="/chdParameters" class="secondary-btn btn-large">View parameters</a>
+            <a href="/chdHelp" class="secondary-btn btn-large">Open guide</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <div id="sampleModal" class="modal">
+      <div class="modal-content">
+        <h4>Select a sample profile</h4>
+        <p>These example profiles can be used to preview the longer cardiovascular workflow.</p>
+        <div class="sample-option" onclick="fillSampleData('healthy')">
+          <strong>Lower-risk profile</strong>
+          <p>Minimal risk factors with normal blood pressure and glucose.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('moderate')">
+          <strong>Moderate-risk profile</strong>
+          <p>Some smoking and blood pressure risk with borderline labs.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('high')">
+          <strong>High-risk profile</strong>
+          <p>Multiple active risk factors including diabetes and high cholesterol.</p>
+        </div>
+        <div class="sample-option" onclick="fillSampleData('severe')">
+          <strong>Very high-risk profile</strong>
+          <p>Strong history burden with markedly elevated blood pressure and glucose.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-overlay" id="cLoadingOverlay">
+      <div class="loading-card">
+        <div class="spinner"></div>
+        <div>
+          <strong>Calculating cardiovascular risk</strong>
+          <div class="field-note">The model is processing the submitted heart disease screening inputs.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("chdForm").addEventListener("submit", function () {
+        document.getElementById("cLoadingOverlay").style.display = "flex";
+      });
+      showCStep(cStep);
+    });
+
+    let cStep = 1;
+    const totalCSteps = 4;
+
+    function showCStep(step) {
+      document.querySelectorAll(".wizard-step[data-cstep]").forEach((el) => {
+        el.classList.toggle("active", parseInt(el.getAttribute("data-cstep"), 10) === step);
+      });
+      document.getElementById("cStepCount").textContent = step;
+      document.getElementById("cProgressFill").style.width = (step / totalCSteps) * 100 + "%";
+      document.getElementById("cPrevBtn").style.display = step === 1 ? "none" : "inline-flex";
+      document.getElementById("cNextBtn").style.display = step === totalCSteps ? "none" : "inline-flex";
+    }
+
+    function updateRange(inputId, outputId) {
+      document.getElementById(outputId).textContent = document.getElementById(inputId).value;
+    }
+
+    function syncToggle(toggleId, hiddenId) {
+      document.getElementById(hiddenId).value = document.getElementById(toggleId).checked ? "1" : "0";
+    }
+
+    function validateCStep(step) {
+      const requiredInputs = document.querySelectorAll(`.wizard-step[data-cstep="${step}"] input[required]`);
+      for (const input of requiredInputs) {
+        if (!input.value) {
+          input.focus();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function nextCStep() {
+      if (!validateCStep(cStep)) return;
+      if (cStep < totalCSteps) {
+        cStep += 1;
+        showCStep(cStep);
+      }
+    }
+
+    function prevCStep() {
+      if (cStep > 1) {
+        cStep -= 1;
+        showCStep(cStep);
+      }
+    }
+
+    function openSampleModal() {
+      const elem = document.getElementById("sampleModal");
+      const instance = M.Modal.getInstance(elem);
+      instance.open();
+    }
+
+    function fillSampleData(profile) {
+      const data = {
+        healthy: {
+          Male: "1",
+          Age: "35",
+          Education: "2",
+          CurrentSmoker: "0",
+          CigarettesPerDay: "0",
+          BPMedicines: "0",
+          PrevalentStroke: "0",
+          PrevalentHypertensive: "0",
+          Diabetes: "0",
+          TotalCholesterol: "200",
+          SystolicBloodPressure: "110",
+          DiastolicBloodPressure: "70",
+          BMI: "24",
+          HeartRate: "70",
+          Glucose: "95",
+        },
+        moderate: {
+          Male: "1",
+          Age: "50",
+          Education: "2",
+          CurrentSmoker: "1",
+          CigarettesPerDay: "10",
+          BPMedicines: "1",
+          PrevalentStroke: "0",
+          PrevalentHypertensive: "1",
+          Diabetes: "0",
+          TotalCholesterol: "240",
+          SystolicBloodPressure: "135",
+          DiastolicBloodPressure: "85",
+          BMI: "28",
+          HeartRate: "80",
+          Glucose: "110",
+        },
+        high: {
+          Male: "1",
+          Age: "60",
+          Education: "1",
+          CurrentSmoker: "1",
+          CigarettesPerDay: "20",
+          BPMedicines: "1",
+          PrevalentStroke: "0",
+          PrevalentHypertensive: "1",
+          Diabetes: "1",
+          TotalCholesterol: "280",
+          SystolicBloodPressure: "150",
+          DiastolicBloodPressure: "95",
+          BMI: "32",
+          HeartRate: "90",
+          Glucose: "140",
+        },
+        severe: {
+          Male: "1",
+          Age: "70",
+          Education: "1",
+          CurrentSmoker: "1",
+          CigarettesPerDay: "30",
+          BPMedicines: "1",
+          PrevalentStroke: "1",
+          PrevalentHypertensive: "1",
+          Diabetes: "1",
+          TotalCholesterol: "320",
+          SystolicBloodPressure: "170",
+          DiastolicBloodPressure: "110",
+          BMI: "36",
+          HeartRate: "110",
+          Glucose: "180",
+        },
+      };
+
+      if (data[profile]) {
+        Object.keys(data[profile]).forEach((key) => {
+          document.getElementById(key).value = data[profile][key];
+        });
+
+        ["Male", "CurrentSmoker", "BPMedicines", "PrevalentStroke", "PrevalentHypertensive", "Diabetes"].forEach((key) => {
+          const toggleId = key + "Toggle";
+          if (document.getElementById(toggleId)) {
+            document.getElementById(toggleId).checked = data[profile][key] === "1";
+          }
+        });
+
+        updateRange("Age", "CAgeVal");
+        updateRange("SystolicBloodPressure", "CSysVal");
+        updateRange("DiastolicBloodPressure", "CDiaVal");
+        updateRange("BMI", "CBMIVal");
+        const instance = M.Modal.getInstance(document.getElementById("sampleModal"));
+        instance.close();
+      }
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Disease Prediction | Diabetes Guide{% endblock %}
+
+{% block content %}
+<div class="container page-shell">
+  <section class="page-hero animate-in">
+    <span class="eyebrow">Diabetes module</span>
+    <h1>Understanding the diabetes screening result</h1>
+    <p>This page explains what the module is doing, what the result means, and how to use it responsibly.</p>
+  </section>
+
+  <nav class="page-tabs animate-in animate-in-2" aria-label="Diabetes pages">
+    <div class="tab-links">
+      <a href="/diabetes" class="page-tab">Screening</a>
+      <a href="/diabetesParameters" class="page-tab">Parameters</a>
+      <a href="/diabetesHelp" class="page-tab active">Guide</a>
+    </div>
+  </nav>
+
+  <section class="section-grid animate-in animate-in-3">
+    <div class="content-card">
+      <h3>How the module works</h3>
+      <ol class="step-list">
+        <li>You enter eight diabetes-related inputs through a guided multi-step form.</li>
+        <li>The values are standardized and passed through the trained prediction model.</li>
+        <li>The app returns a classification message, a risk score, and a qualitative risk level.</li>
+      </ol>
+    </div>
+    <div class="content-card">
+      <h3>How to interpret the result</h3>
+      <ul class="bullet-list">
+        <li>A lower-risk output suggests the submitted profile is less aligned with diabetic patterns in the model.</li>
+        <li>A higher-risk output suggests the entered values resemble patterns associated with diabetes risk.</li>
+        <li>The result is a screening signal, not a diagnosis.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section-grid page-shell animate-in animate-in-4">
+    <div class="content-card">
+      <h3>Why early review matters</h3>
+      <p>Persistent glucose dysregulation can affect blood vessels, kidneys, eyes, and nerves over time. Early screening
+        can help prompt timely medical follow-up.</p>
+    </div>
+    <div class="content-card">
+      <h3>Best next step after a higher-risk result</h3>
+      <p>Confirm the input values, discuss symptoms and history with a clinician, and consider laboratory confirmation
+        rather than relying on the screening result alone.</p>
+    </div>
+  </section>
+
+  <div class="notice-box animate-in animate-in-5">
+    <h4>Medical disclaimer</h4>
+    <p>This module is intended for educational decision support only. Clinical evaluation and formal testing remain
+      essential.</p>
+  </div>
+</div>
+{% endblock %}

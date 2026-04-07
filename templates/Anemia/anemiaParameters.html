@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Disease Prediction | Anemia Parameters{% endblock %}
+
+{% block content %}
+  <div class="container page-shell">
+    <section class="page-hero animate-in">
+      <span class="eyebrow">Anemia module</span>
+      <h1>Anemia parameter guide</h1>
+      <p>Use this reference page to understand the hematology fields used in the anemia screening workflow.</p>
+    </section>
+
+    <nav class="page-tabs animate-in animate-in-2" aria-label="Anemia pages">
+      <div class="tab-links">
+        <a href="/anemia" class="page-tab">Screening</a>
+        <a href="/anemiaParameters" class="page-tab active">Parameters</a>
+        <a href="/anemiaHelp" class="page-tab">Guide</a>
+      </div>
+    </nav>
+
+    <section class="section-grid animate-in animate-in-3">
+      <div class="content-card">
+        <h3>Input definitions</h3>
+        <ul class="content-list">
+          <li><strong>Gender:</strong> Encoded for the underlying model as 0 for female and 1 for male.</li>
+          <li><strong>Hemoglobin:</strong> Oxygen-carrying protein level in blood; lower values often suggest anemia.</li>
+          <li><strong>MCH:</strong> Mean Corpuscular Hemoglobin, or average hemoglobin per red blood cell.</li>
+          <li><strong>MCHC:</strong> Mean Corpuscular Hemoglobin Concentration inside red blood cells.</li>
+          <li><strong>MCV:</strong> Mean Corpuscular Volume, describing average red blood cell size.</li>
+        </ul>
+      </div>
+
+      <div class="summary-card">
+        <h3>Good input practice</h3>
+        <dl>
+          <div>
+            <dt>Preferred source</dt>
+            <dd>CBC report</dd>
+          </div>
+          <div>
+            <dt>Units</dt>
+            <dd>Lab units</dd>
+          </div>
+          <div>
+            <dt>Input style</dt>
+            <dd>Exact values</dd>
+          </div>
+          <div>
+            <dt>Goal</dt>
+            <dd>Reliable pattern match</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="metric-table-wrap page-shell animate-in animate-in-4">
+      <table class="metric-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Accepted range</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Gender</td><td>0 to 1</td></tr>
+          <tr><td>Hemoglobin</td><td>5 to 20</td></tr>
+          <tr><td>MCH</td><td>10 to 40</td></tr>
+          <tr><td>MCHC</td><td>15 to 50</td></tr>
+          <tr><td>MCV</td><td>60 to 110</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="notice-box animate-in animate-in-5">
+      <h4>Data quality note</h4>
+      <p>Use recent CBC or lab values whenever possible. Approximate values can make the screening output less meaningful.</p>
+    </div>
+  </div>
+{% endblock %}
